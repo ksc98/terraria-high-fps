@@ -1,0 +1,2 @@
+Renders the game above 60 FPS by interpolating entity motion between world updates.
+The world still simulates at exactly 60 updates per second, so nothing about gameplay speed changes.

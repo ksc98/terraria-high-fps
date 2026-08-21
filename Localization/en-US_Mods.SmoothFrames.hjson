@@ -1,0 +1,55 @@
+Configs: {
+	SmoothFramesConfig: {
+		DisplayName: Smooth Frames Config
+
+		MotionInterpolation: {
+			Label: Motion Interpolation
+			Tooltip: ""
+		}
+
+		ForceFrameSkipOff: {
+			Label: Force Frame Skip Off
+			Tooltip: ""
+		}
+
+		TeleportThreshold: {
+			Label: Teleport Threshold
+			Tooltip: ""
+		}
+
+		ThrottleDrawTimeParticles: {
+			Label: Throttle Draw Time Particles
+			Tooltip: ""
+		}
+
+		InterpolateCamera: {
+			Label: Interpolate Camera
+			Tooltip: ""
+		}
+
+		InterpolatePlayers: {
+			Label: Interpolate Players
+			Tooltip: ""
+		}
+
+		InterpolateNPCs: {
+			Label: Interpolate N P Cs
+			Tooltip: ""
+		}
+
+		InterpolateProjectiles: {
+			Label: Interpolate Projectiles
+			Tooltip: ""
+		}
+
+		InterpolateItems: {
+			Label: Interpolate Items
+			Tooltip: ""
+		}
+
+		InterpolateDust: {
+			Label: Interpolate Dust
+			Tooltip: ""
+		}
+	}
+}

@@ -1,0 +1,4 @@
+displayName = Smooth Frames
+author = kchang
+version = 0.1
+side = Client
