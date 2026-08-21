@@ -12,6 +12,13 @@ public class SmoothFramesConfig : ModConfig
 	[DefaultValue(true)]
 	public bool MotionInterpolation { get; set; }
 
+	/// <summary>
+	/// Re-reads the mouse position every frame instead of once per world update, so the cursor moves at
+	/// the full frame rate.
+	/// </summary>
+	[DefaultValue(true)]
+	public bool SmoothCursor { get; set; }
+
 	[DefaultValue(true)]
 	public bool InterpolatePlayers { get; set; }
 
