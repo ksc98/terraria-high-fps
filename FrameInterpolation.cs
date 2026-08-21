@@ -62,14 +62,17 @@ public sealed class FrameInterpolation : ModSystem
 		_dustPrev = new Snapshot[Main.maxDust + 1];
 		_dustCurr = new Snapshot[Main.maxDust + 1];
 
-		On_Main.DoUpdateInWorld += CaptureAfterUpdate;
-		On_Main.DoDraw += InterpolateAroundDraw;
+		// Main.OnPreDraw runs inside the draw but before DoDraw_UpdateCameraPosition, which is the one
+		// ordering constraint that matters: the camera is derived from the local player, so the player has
+		// to already hold its interpolated position by then.
+		Main.OnPreDraw += BeforeDraw;
+		Main.OnPostDraw += AfterDraw;
 	}
 
 	public override void Unload()
 	{
-		On_Main.DoUpdateInWorld -= CaptureAfterUpdate;
-		On_Main.DoDraw -= InterpolateAroundDraw;
+		Main.OnPreDraw -= BeforeDraw;
+		Main.OnPostDraw -= AfterDraw;
 
 		_playerPrev = _playerCurr = _npcPrev = _npcCurr = null;
 		_itemLocPrev = _itemLocCurr = null;
@@ -82,10 +85,9 @@ public sealed class FrameInterpolation : ModSystem
 	internal static bool SuppressDrawTimeParticle
 		=> _inDraw && !_firstDrawAfterUpdate && (SmoothFramesConfig.Instance?.ThrottleDrawTimeParticles ?? true);
 
-	private void CaptureAfterUpdate(On_Main.orig_DoUpdateInWorld orig, Main self)
+	/// <summary> Runs once per world update, after everything has moved. </summary>
+	public override void PostUpdateEverything()
 	{
-		orig(self);
-
 		if (!Enabled)
 			return;
 
@@ -115,7 +117,7 @@ public sealed class FrameInterpolation : ModSystem
 		for (int i = 0; i < _itemCurr.Length && i < Main.item.Length; i++) {
 			_itemPrev[i] = _itemCurr[i];
 
-			WorldItem item = Main.item[i];
+			var item = Main.item[i];
 			_itemCurr[i] = item != null && item.active ? new Snapshot { Position = item.position, Valid = true } : default;
 		}
 
@@ -128,7 +130,7 @@ public sealed class FrameInterpolation : ModSystem
 
 	}
 
-	private void InterpolateAroundDraw(On_Main.orig_DoDraw orig, Main self, GameTime gameTime)
+	private void BeforeDraw(GameTime gameTime)
 	{
 		_firstDrawAfterUpdate = Main.GameUpdateCount != _lastUpdateCount;
 		_lastUpdateCount = Main.GameUpdateCount;
@@ -148,19 +150,16 @@ public sealed class FrameInterpolation : ModSystem
 			}
 		}
 
-		bool apply = Enabled && !Main.gamePaused;
-		try {
-			if (apply)
-				Apply(Alpha());
+		if (Enabled && !Main.gamePaused)
+			Apply(Alpha());
+	}
 
-			orig(self, gameTime);
-		}
-		finally {
-			if (_applied)
-				Restore();
+	private void AfterDraw(GameTime gameTime)
+	{
+		if (_applied)
+			Restore();
 
-			_inDraw = false;
-		}
+		_inDraw = false;
 	}
 
 	private static bool Enabled

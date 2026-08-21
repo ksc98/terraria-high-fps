@@ -51,5 +51,10 @@ Configs: {
 			Label: Interpolate Dust
 			Tooltip: ""
 		}
+
+		SmoothCursor: {
+			Label: Smooth Cursor
+			Tooltip: ""
+		}
 	}
 }
