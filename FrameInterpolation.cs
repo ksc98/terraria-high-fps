@@ -84,16 +84,6 @@ public sealed class FrameInterpolation : ModSystem
 
 	private void CaptureAfterUpdate(On_Main.orig_DoUpdateInWorld orig, Main self)
 	{
-		if (Main.GameUpdateCount % 60 == 0 && Main.LocalPlayer != null) {
-			Player p = Main.LocalPlayer;
-			ModContent.GetInstance<SmoothFrames>().Logger.Info(
-				$"[aim] uiScale={Main.UIScale:F2} screen={Main.screenWidth}x{Main.screenHeight} " +
-				$"mouse={Main.mouseX},{Main.mouseY} screenPos={Main.screenPosition.X:F1},{Main.screenPosition.Y:F1} " +
-				$"expectTile={(int)((Main.mouseX + Main.screenPosition.X) / 16f)},{(int)((Main.mouseY + Main.screenPosition.Y) / 16f)} " +
-				$"tileTarget={Player.tileTargetX},{Player.tileTargetY} playerTile={(int)(p.position.X / 16f)},{(int)(p.position.Y / 16f)} " +
-				$"interp={(SmoothFramesConfig.Instance?.MotionInterpolation ?? true)}");
-		}
-
 		orig(self);
 
 		if (!Enabled)
@@ -160,15 +150,8 @@ public sealed class FrameInterpolation : ModSystem
 
 		bool apply = Enabled && !Main.gamePaused;
 		try {
-			Player local = Main.LocalPlayer;
-			bool logSwing = _firstDrawAfterUpdate && !Main.gameMenu && local != null && (local.itemAnimation > 0 || Main.GameUpdateCount % 120 == 0);
-			string before = logSwing ? $"style={local.HeldItem?.useStyle} type={local.HeldItem?.type} anim={local.itemAnimation}/{local.itemAnimationMax} rot={local.itemRotation:F3} loc={local.itemLocation.X:F1},{local.itemLocation.Y:F1} pos={local.position.X:F1},{local.position.Y:F1}" : null;
-
 			if (apply)
 				Apply(Alpha());
-
-			if (logSwing)
-				ModContent.GetInstance<SmoothFrames>().Logger.Info($"[swing] before {before} | after rot={local.itemRotation:F3} loc={local.itemLocation.X:F1},{local.itemLocation.Y:F1} pos={local.position.X:F1},{local.position.Y:F1} alpha={Alpha():F2} applied={apply}");
 
 			orig(self, gameTime);
 		}
